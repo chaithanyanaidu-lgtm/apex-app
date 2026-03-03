@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "id": "1772477147603",
+      "fname": "Test",
+      "lname": "User",
+      "email": "test@example.com",
+      "pass": "password123",
+      "age": 30,
+      "weight": 80,
+      "height": 180,
+      "gender": "male",
+      "goal": "cut",
+      "exp": "beginner",
+      "activity": "active",
+      "plan": "pro"
+    }
+  ],
+  "payments": [
+    {
+      "id": "1772477496356",
+      "email": "test@example.com",
+      "name": "Test User",
+      "ref": "123456789",
+      "plan": "pro",
+      "amount": 39,
+      "date": "2026-03-02T18:51:36.356Z",
+      "status": "pending"
+    }
+  ]
+}
