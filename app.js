@@ -921,31 +921,9 @@ function initPWA() {
 }
 
 // ── INIT ON LOAD ──
-window.addEventListener('load', async () => {
-  const token = localStorage.getItem('apexSessionToken');
-  const email = localStorage.getItem('apexSessionEmail');
-  if (token) {
-    try {
-      const res = await fetch(`/api/auth/profile`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        U = data.user;
-      } else {
-        U = {};
-        localStorage.removeItem('apexSessionEmail');
-      }
-    } catch (err) {
-      U = {};
-    }
-  }
-  initFloatingIcons();
-  initHeroCanvas();
-  initPWA();
-  // Back button / popstate
-  window.addEventListener('popstate', () => { mobileBack(); });
-});
+// Already handled above
+initPWA();
+window.addEventListener('popstate', () => { mobileBack(); });
 
 
 // ── LIQUID BARS & MEALS ──
@@ -1155,84 +1133,84 @@ function renderWeeklyVolume(logs) {
 
   let dots = document.getElementById('streak-dots');
   if (dots) {
-    dots.innerHTML = Array(21).fill(0).map((_, i) => \`<div class="s-dot \${i < (logs.length || 7) ? 'done':''}"></div>\`).join('');
+    dots.innerHTML = Array(21).fill(0).map((_, i) => `<div class="s-dot ${i < (logs.length || 7) ? 'done' : ''}"></div>`).join('');
   }
-  
+
   let wkb = document.getElementById('weekly-volume-bars');
-  if(wkb) {
+  if (wkb) {
     const heights = [70, 55, 85, Math.min(logs.length * 10, 100) || 5];
-    wkb.innerHTML = heights.map((h, i) => \`
+    wkb.innerHTML = heights.map((h, i) => `
       <div class="act-col">
-        <div class="act-bar \${i === 3 ? 'today-bar':'done-bar'}" style="height:\${h}%;"></div>
-        <div class="act-lbl">Week \${i+1}</div>
+        <div class="act-bar ${i === 3 ? 'today-bar' : 'done-bar'}" style="height:${h}%;"></div>
+        <div class="act-lbl">Week ${i + 1}</div>
       </div>
-    \`).join('');
+    `).join('');
   }
 }
 
 // ── CHATBOT ──
 function toggleChat() {
   const panel = document.getElementById('chat-panel');
-  if(!panel) return;
+  if (!panel) return;
   panel.classList.toggle('open');
   if (panel.classList.contains('open')) {
     let ci = document.getElementById('chat-input');
-    if(ci) ci.focus();
+    if (ci) ci.focus();
     let cm = document.getElementById('chat-messages');
-    if(cm && cm.children.length === 0) {
+    if (cm && cm.children.length === 0) {
       appendChatMessage('system', "I'm APEX AI. I can answer fitness questions, create routines, and track your habits.\\n\\nTry:\\n- Log my breakfast (500 cal)\\n- I just completed my meditation habit\\n- What's a good workout for triceps?");
     }
   }
 }
 
 async function sendChatMessage() {
-  if(!U || !U.email) {
+  if (!U || !U.email) {
     appendChatMessage('system', "Please log in to use the AI."); return;
   }
   const inp = document.getElementById('chat-input');
-  if(!inp) return;
+  if (!inp) return;
   const txt = inp.value.trim();
-  if(!txt) return;
-  
+  if (!txt) return;
+
   appendChatMessage('user', txt);
   inp.value = '';
-  
+
   const loadingId = appendChatMessage('system', '...', true);
-  
+
   try {
     const token = localStorage.getItem('apexSessionToken');
     const res = await fetch('/api/gemini', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ token }`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ message: txt, email: U.email })
     });
     const data = await res.json();
     const lMsg = document.getElementById(loadingId);
-    if(lMsg) lMsg.remove();
-    
+    if (lMsg) lMsg.remove();
+
     if (data.action && data.action.type) {
       handleChatAction(data.action);
     }
-    
+
     if (data.reply) {
       appendChatMessage('system', data.reply);
     } else {
       appendChatMessage('system', "Could not process request.");
     }
-  } catch(e) {
+  } catch (e) {
     const lMsg = document.getElementById(loadingId);
-    if(lMsg) lMsg.remove();
+    if (lMsg) lMsg.remove();
     appendChatMessage('system', 'Error connecting to AI.');
   }
 }
 
 function handleChatAction(action) {
   if (action.type === 'log_meal' && action.calories) {
-    updateLiquidBars((cachedCalTarget * 0.5) + action.calories, cachedProtTarget * 0.5); 
-    fetchMealLogs(); 
+    updateLiquidBars((cachedCalTarget * 0.5) + action.calories, cachedProtTarget * 0.5);
+    fetchMealLogs();
     showToast("Meal logged via AI", "success");
   } else if (action.type === 'complete_habit') {
     fetchHabits();
@@ -1242,7 +1220,7 @@ function handleChatAction(action) {
 
 function appendChatMessage(sender, text, isLoading = false) {
   const c = document.getElementById('chat-messages');
-  if(!c) return null;
+  if (!c) return null;
   const d = document.createElement('div');
   d.className = 'msg ' + sender;
   d.innerHTML = text.replace(/\n/g, '<br>');
