@@ -462,6 +462,69 @@ Always be encouraging, friendly, and knowledgeable. Keep responses concise but h
 });
 
 // ══════════════════════════════════════
+//  ADMIN ROUTES
+// ══════════════════════════════════════
+
+// Admin Login
+app.post('/api/admin/login', (req, res) => {
+    const { email, password } = req.body;
+    // Hardcoded admin credentials for simplicity as requested
+    if (email === 'admin@apex.com' && password === 'admin123') {
+        res.status(200).json({ message: 'Admin login successful', token: 'admin-secret-token' });
+    } else {
+        res.status(401).json({ error: 'Invalid admin credentials' });
+    }
+});
+
+// Admin Stats
+app.get('/api/admin/stats', (req, res) => {
+    const db = readDB();
+    const stats = {
+        totalUsers: db.users.length,
+        totalWorkouts: db.workoutLogs.length,
+        totalMeals: db.mealLogs.length,
+        activeHabits: db.habits.length
+    };
+    res.json(stats);
+});
+
+// Admin Users List
+app.get('/api/admin/users', (req, res) => {
+    const db = readDB();
+    const users = db.users.map(u => {
+        const { pass, ...safeUser } = u;
+        return safeUser;
+    });
+    res.json({ users });
+});
+
+// Admin Delete User
+app.delete('/api/admin/user/:email', (req, res) => {
+    const db = readDB();
+    const emailToDelete = req.params.email;
+
+    // Prevent deleting the admin account if it exists in DB
+    if (emailToDelete === 'admin@apex.com') {
+        return res.status(403).json({ error: 'Cannot delete superadmin' });
+    }
+
+    const initialLen = db.users.length;
+    db.users = db.users.filter(u => u.email !== emailToDelete);
+
+    if (db.users.length === initialLen) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Cascade delete user data
+    db.workoutLogs = db.workoutLogs.filter(l => l.email !== emailToDelete);
+    db.mealLogs = db.mealLogs.filter(l => l.email !== emailToDelete);
+    db.habits = db.habits.filter(h => h.email !== emailToDelete);
+    db.habitLogs = db.habitLogs.filter(l => l.email !== emailToDelete);
+    db.payments = db.payments.filter(p => p.email !== emailToDelete);
+
+    writeDB(db);
+    res.json({ message: 'User and associated data deleted' });
+});
 //  STATIC FILE SERVING
 // ══════════════════════════════════════
 
