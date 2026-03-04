@@ -14,6 +14,36 @@
       "exp": "beginner",
       "activity": "active",
       "plan": "pro"
+    },
+    {
+      "id": "1772563758429",
+      "fname": "P",
+      "lname": "Chaithanya",
+      "email": "chaithanyanaidu26@gmail.com",
+      "pass": "12345678",
+      "age": 20,
+      "weight": 65,
+      "height": 170,
+      "gender": "male",
+      "goal": "bulk",
+      "exp": "intermediate",
+      "activity": "active",
+      "plan": "pro"
+    },
+    {
+      "id": "1772564303672",
+      "fname": "P",
+      "lname": "Chaithanya",
+      "email": "chaithanyanaidu@gmail.com",
+      "pass": "12345678",
+      "age": 20,
+      "weight": 65,
+      "height": 170,
+      "gender": "male",
+      "goal": "bulk",
+      "exp": "intermediate",
+      "activity": "active",
+      "plan": "free"
     }
   ],
   "payments": [
@@ -26,6 +56,30 @@
       "amount": 39,
       "date": "2026-03-02T18:51:36.356Z",
       "status": "pending"
+    },
+    {
+      "id": "1772563804987",
+      "email": "chaithanyanaidu26@gmail.com",
+      "name": "P Chaithanya",
+      "ref": "1245678543",
+      "plan": "pro",
+      "amount": 39,
+      "date": "2026-03-03T18:50:04.987Z",
+      "status": "pending"
+    },
+    {
+      "id": "1772563825884",
+      "email": "chaithanyanaidu26@gmail.com",
+      "name": "P Chaithanya",
+      "ref": "12345678",
+      "plan": "pro",
+      "amount": 39,
+      "date": "2026-03-03T18:50:25.884Z",
+      "status": "pending"
     }
-  ]
+  ],
+  "workoutLogs": [],
+  "mealLogs": [],
+  "habits": [],
+  "habitLogs": []
 }
