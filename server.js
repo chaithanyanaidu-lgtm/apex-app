@@ -93,7 +93,7 @@ app.get('/', (req, res) => {
 });
 
 // Since the front-end has multiple html files or handles its own view routing, let's allow all paths not matched by api to serve the main HTML just in case
-app.get('*', (req, res, next) => {
+app.get(/.*/, (req, res, next) => {
     if (req.path.startsWith('/api')) {
         return next();
     }
